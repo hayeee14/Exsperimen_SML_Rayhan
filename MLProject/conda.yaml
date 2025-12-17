@@ -1,0 +1,11 @@
+name: loan-prediction-env
+channels:
+  - defaults
+dependencies:
+  - python=3.9
+  - scikit-learn
+  - pandas
+  - numpy
+  - pip
+  - pip:
+      - mlflow
