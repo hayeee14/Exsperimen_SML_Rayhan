@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 
-# --- KONFIGURASI ---
+#  KONFIGURASI 
 EXPERIMENT_NAME = "Eksperimen_Loan_Rayhan_Skilled"
 ARTIFACT_PATH = "model_random_forest_tuned"
 
@@ -18,12 +18,12 @@ def run_training():
     # Mencari file data bersih
     file_path = os.path.join("namadataset_preprocessing", "train_clean.csv")
     
-    print(f"📂 Sedang membaca data dari: {file_path}")
+    print(f" Sedang membaca data dari: {file_path}")
     
     # Cek apakah file ada
     if not os.path.exists(file_path):
-        print("❌ ERROR: File 'train_clean.csv' tidak ditemukan!")
-        print("👉 Pastikan file tersebut ada di dalam folder 'Membangun_model/namadataset_preprocessing'")
+        print(" ERROR: File 'train_clean.csv' tidak ditemukan!")
+        print(" Pastikan file tersebut ada di dalam folder 'Membangun_model/namadataset_preprocessing'")
         return
 
     df = pd.read_csv(file_path)
@@ -33,13 +33,13 @@ def run_training():
     # Split Data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # --- 2. SETUP MLFLOW ---
+    #  2. SETUP MLFLOW 
     mlflow.set_experiment(EXPERIMENT_NAME)
 
     with mlflow.start_run(run_name="Skilled_Hyperparameter_Tuning"):
-        print("🚀 Memulai Training dengan Hyperparameter Tuning...")
+        print(" Memulai Training dengan Hyperparameter Tuning...")
 
-        # --- 3. TUNING ---
+        #  3. TUNING 
         rf = RandomForestClassifier(random_state=42)
         param_grid = {
             'n_estimators': [50, 100],
@@ -51,19 +51,19 @@ def run_training():
 
         best_model = grid_search.best_estimator_
         best_params = grid_search.best_params_
-        print(f"✅ Parameter Terbaik: {best_params}")
+        print(f" Parameter Terbaik: {best_params}")
 
-        # --- 4. EVALUASI ---
+        #  4. EVALUASI 
         y_pred = best_model.predict(X_test)
         acc = accuracy_score(y_test, y_pred)
         f1 = f1_score(y_test, y_pred, average='weighted')
         prec = precision_score(y_test, y_pred, average='weighted')
         rec = recall_score(y_test, y_pred, average='weighted')
         
-        print(f"📊 Akurasi: {acc:.4f}")
+        print(f" Akurasi: {acc:.4f}")
 
-        # --- 5. LOGGING MANUAL (Syarat Skilled) ---
-        print("📝 Mencatat ke MLflow...")
+        5. LOGGING MANUAL 
+        print(" Mencatat ke MLflow...")
         for param, value in best_params.items():
             mlflow.log_param(param, value)
         
@@ -73,7 +73,7 @@ def run_training():
         mlflow.log_metric("recall", rec)
 
         mlflow.sklearn.log_model(best_model, ARTIFACT_PATH)
-        print("\n🎉 SUKSES! Silakan cek MLflow UI.")
+        print("\n SUKSES! Silakan cek MLflow UI.")
 
 if __name__ == "__main__":
     run_training()
